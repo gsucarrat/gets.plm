@@ -21,7 +21,7 @@
 #################################################################
 
 ##set working directory:
-setwd("C:/Users/sucarrat/Documents/R/gs/gets.plm/devel/")
+setwd("C:/Users/sucarrat/Documents/R/gs/gets.plm/github/")
 #setwd(choose.dir())
 
 ##required packages:
