@@ -1,4 +1,4 @@
-# gets
+# gets.plm
 
 ![R-CMD-check](https://github.com/gsucarrat/gets.plm/workflows/R-CMD-check/badge.svg)
 
