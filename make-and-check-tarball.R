@@ -33,13 +33,13 @@
 ##this folder.
 
 ##set working directory:
-setwd("C:/Users/sucarrat/Documents/R/gs/gets.plm/devel/")
+setwd("C:/Users/sucarrat/Documents/R/gs/gets.plm/github/")
 #setwd(choose.dir()) #interactively
 
 ##in which folder is the package located?:
 ##========================================
 
-whereFolder <- "C:/Users/sucarrat/Documents/R/gs/gets.plm/devel/gets.plm"
+whereFolder <- "C:/Users/sucarrat/Documents/R/gs/gets.plm/github/gets.plm"
 
 
 ####################################################
