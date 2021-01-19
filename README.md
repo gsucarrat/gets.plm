@@ -1,7 +1,5 @@
 # gets.plm
 
-![R-CMD-check](https://github.com/gsucarrat/gets.plm/workflows/R-CMD-check/badge.svg)
-
 General-to-Specific (GETS) modelling of 'plm' models (linear panel data models).
 
 # Installation
