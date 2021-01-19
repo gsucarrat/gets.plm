@@ -7,7 +7,7 @@ Author: Genaro Sucarrat [aut, cre]
 Maintainer: Genaro Sucarrat <genaro.sucarrat@bi.no>
 Description: General-to-Specific (GETS) Modelling of models of class 'plm' (linear paneldata models), see Pretis, Reade and Sucarrat (2018) <doi:10.18637/jss.v086.i03>.
 License: GPL (>= 2)
-Depends: R (>= 3.3.0), gets, plm
+Depends: R (>= 3.3.0), zoo, gets, plm
 Suggests: 
 BugReports: https://github.com/gsucarrat/gets.plm/issues
 URL: https://CRAN.R-project.org/package=gets.plm, http://www.sucarrat.net/R/gets/
