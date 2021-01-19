@@ -1,0 +1,9 @@
+import(gets)
+import(plm)
+
+importFrom("stats", "as.formula", "coef", "dnorm", "residuals", "sd", "vcov")
+
+export("gets.plm")
+
+##S3 method for class plm:
+S3method("gets", "plm")
