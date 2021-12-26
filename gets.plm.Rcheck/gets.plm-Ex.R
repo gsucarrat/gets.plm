@@ -17,7 +17,7 @@ flush(stderr()); flush(stdout())
 ###   (linear paneldata models)
 ### Aliases: gets.plm
 ### Keywords: Statistical Models Time Series Econometrics Climate
-###   Econometrics Financial Econometrics
+###   Econometrics Financial Econometrics Panel Data
 
 ### ** Examples
 
@@ -48,17 +48,11 @@ mygum <-
   data=mydata)
 summary(mygum)
 
-myspecific <- gets(mygum) #101 estimations
-summary(myspecific)
-
-myspecific <- gets(mygum, turbo=TRUE) #56 estimations
-summary(myspecific)
+myspecific <- gets(mygum)
 
 myspecific <- gets(mygum, keep=2)
-summary(myspecific)
 
 myspecific <- gets(mygum, t.pval=0.4)
-summary(myspecific)
 
 ##new gum, do gets:
 ##=================
@@ -68,17 +62,11 @@ mygum <-
   data=mydata, effect="twoways")
 summary(mygum)
 
-myspecific <- gets(mygum) #101 estimations
-summary(myspecific)
-
-myspecific <- gets(mygum, turbo=TRUE) #56 estimations
-summary(myspecific)
+myspecific <- gets(mygum)
 
 myspecific <- gets(mygum, keep=2)
-summary(myspecific)
 
 myspecific <- gets(mygum, t.pval=0.4)
-summary(myspecific)
 
 
 

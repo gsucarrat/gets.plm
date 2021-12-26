@@ -3,8 +3,8 @@
 ## Oslo.
 ##
 ## 1 INITIATE
-## 2 CREATE ARTIFICIAL DATA
-## 3 TEST gets.plm()
+## 2 TEST gets.plm() WITH ARTIFICIAL DATA
+## 3 TEST gets.plm() WITH REAL DATA
 ##
 ## Workflow: First estimate a model with plm(), then
 ## apply GETS to it. Example:
@@ -21,7 +21,7 @@
 #################################################################
 
 ##set working directory:
-setwd("C:/Users/sucarrat/Documents/R/gs/gets.plm/github/")
+setwd("C:/Users/sucarrat/Documents/R/gs/gets.plm/devel/")
 #setwd(choose.dir())
 
 ##required packages:
@@ -32,11 +32,11 @@ library(plm)
 rm(list = ls())
 
 ##load gets.plm source:
-source("./gets.plm/R/gets.plm.R")
+source("./gets.plm/R/gets.plm-source.R")
 
 
 ###########################################################
-## 2 CREATE ARTIFICIAL DATA
+## 2 TEST gets.plm() WITH ARTIFICIAL DATA
 ###########################################################
 
 ##create some artificial data:
@@ -57,38 +57,33 @@ head(mydata)
 ##delete unnecessary stuff from workspace:
 rm(iN, iT, iNiT, Z, x, firm, year)
 
-##check that plm works on data:
-##=============================
-
-myplm <- 
-  plm(Z ~ a + b + c + d + e + f + g + h + i + j,
-  data=mydata)
-summary(myplm)
-
-
-###########################################################
-## 3 TEST gets.plm()
-###########################################################
-
 ##estimate gum, do gets:
 ##======================
 
 mygum <- 
   plm(Z ~ a + b + c + d + e + f + g + h + i + j,
-  data=mydata)
+  data=mydata) #effect="individual"
 summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
 
-myspecific <- gets(mygum) #101 estimations
-summary(myspecific)
-
-myspecific <- gets(mygum, turbo=TRUE) #56 estimations
-summary(myspecific)
-
-myspecific <- gets(mygum, keep=2)
-summary(myspecific)
-
+myspecific <- gets(mygum)
+myspecific <- gets(mygum, keep=2) 
 myspecific <- gets(mygum, t.pval=0.4)
-summary(myspecific)
+
+##new gum, do gets:
+##=================
+
+mygum <- 
+  plm(Z ~ a + b + c + d + e + f + g + h + i + j,
+  data=mydata, effect="time")
+summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
+
+myspecific <- gets(mygum)
+myspecific <- gets(mygum, keep=2) 
+myspecific <- gets(mygum, t.pval=0.4)
 
 ##new gum, do gets:
 ##=================
@@ -97,39 +92,145 @@ mygum <-
   plm(Z ~ a + b + c + d + e + f + g + h + i + j,
   data=mydata, effect="twoways")
 summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
 
-myspecific <- gets(mygum) #101 estimations
-summary(myspecific)
-
-myspecific <- gets(mygum, turbo=TRUE) #56 estimations
-summary(myspecific)
-
+myspecific <- gets(mygum)
 myspecific <- gets(mygum, keep=2)
-summary(myspecific)
-
 myspecific <- gets(mygum, t.pval=0.4)
-summary(myspecific)
 
 ##new gum, do gets:
 ##=================
 
-##these do not work, because the number of coefficients is
-##increased by one (intercept is added); this is not accommodated
-##in the current code
+mygum <- 
+  plm(Z ~ a + b + c + d + e + f + g + h + i + j,
+  data=mydata, effect="nested")
+summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
+
+myspecific <- gets(mygum)
+myspecific <- gets(mygum, keep=2)
+myspecific <- gets(mygum, t.pval=0.4)
+
+##new gum, do gets:
+##=================
 
 mygum <- 
   plm(Z ~ a + b + c + d + e + f + g + h + i + j,
   data=mydata, model="random")
 summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
 
-myspecific <- gets(mygum) #101 estimations
-summary(myspecific)
+##note: 'plm' uses z-values instead of t-values for p-values
 
-myspecific <- gets(mygum, turbo=TRUE) #56 estimations
-summary(myspecific)
-
+myspecific <- gets(mygum)
 myspecific <- gets(mygum, keep=2)
-summary(myspecific)
-
 myspecific <- gets(mygum, t.pval=0.4)
-summary(myspecific)
+
+##new gum, do gets:
+##=================
+
+##for this to work, I have to find out how exogenous variables
+##are constructed!
+
+mygum <- 
+  plm(Z ~ a + b + c + d + e + f + g + h + i + j,
+  data=mydata, model="ht")
+#summary(mygum)
+#length(coef(mygum))
+#dim(vcov(mygum))
+
+##new gum, do gets:
+##=================
+
+mygum <- 
+  plm(Z ~ a + b + c + d + e + f + g + h + i + j,
+  data=mydata, model="between")
+summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
+
+myspecific <- gets(mygum)
+myspecific <- gets(mygum, keep=2)
+myspecific <- gets(mygum, t.pval=0.4)
+
+##new gum, do gets:
+##=================
+
+mygum <- 
+  plm(Z ~ a + b + c + d + e + f + g + h + i + j,
+  data=mydata, model="pooling")
+summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
+
+myspecific <- gets(mygum)
+myspecific <- gets(mygum, keep=2)
+myspecific <- gets(mygum, t.pval=0.4)
+
+##new gum, do gets:
+##=================
+
+mygum <- 
+  plm(Z ~ a + b + c + d + e + f + g + h + i + j,
+  data=mydata, model="fd")
+summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
+
+myspecific <- gets(mygum)
+myspecific <- gets(mygum, keep=2)
+myspecific <- gets(mygum, t.pval=0.4)
+
+
+###########################################################
+## 3 TEST gets.plm() WITH REAL DATA
+###########################################################
+
+## basic example from help(plm) file
+##==================================
+
+data("Produc", package = "plm")
+mygum <- plm(log(gsp) ~ log(pcap) + log(pc) + log(emp) + unemp,
+          data = Produc, index = c("state","year"))
+summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
+
+myspecific <- gets(mygum)
+myspecific <- gets(mygum, keep=1)
+myspecific <- gets(mygum, t.pval=0.4)
+
+
+## based on example from help(plm) file:
+## Hausman-Taylor estimator and Amemiya-MaCurdy estimator
+## replicate Baltagi (2005, 2013), table 7.4
+##=======================================================
+
+data("Wages", package = "plm")
+mygum <- plm(lwage ~ wks + south + smsa + married + exp + I(exp ^ 2) + 
+          bluecol + ind + union + sex + black + ed, 
+          data = Wages, index = 595)
+summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
+
+myspecific <- gets(mygum)
+myspecific <- gets(mygum, keep=1)
+myspecific <- gets(mygum, t.pval=0.4)
+
+##the following works but is not correct, since the code is not
+##capable of handling "|" in a correct manner yet
+data("Wages", package = "plm")
+mygum <- plm(lwage ~ wks + south + smsa + married + exp + I(exp ^ 2) + 
+          bluecol + ind + union + sex + black + ed |
+          bluecol + south + smsa + ind + sex + black |
+          wks + married + union + exp + I(exp ^ 2), 
+          data = Wages, index = 595)
+summary(mygum)
+length(coef(mygum))
+dim(vcov(mygum))
+
+myspecific <- gets(mygum)

@@ -1,8 +1,8 @@
 ####################################################
 ## This file makes and checks the tarball of the 
-## gets package, and installs it
+## gets.plm package, and installs it
 ##
-## First created 2 July 2019 by Genaro Sucarrat
+## First created 8 July 2020 by Genaro Sucarrat
 ##
 ## Requirements:
 ##
@@ -33,13 +33,14 @@
 ##this folder.
 
 ##set working directory:
-setwd("C:/Users/sucarrat/Documents/R/gs/gets.plm/github/")
+setwd("C:/Users/sucarrat/Documents/R/gs/gets.plm/devel/")
 #setwd(choose.dir()) #interactively
 
 ##in which folder is the package located?:
 ##========================================
 
-whereFolder <- "C:/Users/sucarrat/Documents/R/gs/gets.plm/github/gets.plm"
+whereFolder <-
+  "C:/Users/sucarrat/Documents/R/gs/gets.plm/devel/gets.plm"
 
 
 ####################################################
@@ -58,7 +59,7 @@ if(doDelete){
   ##the deleted files and folders:
   deletedItems <- NULL
   
-  ##delete tarball, if it already exists:             
+  ##delete tarball(s), if any:             
   toBeDeleted <- fileNames[ grep(".tar.gz", fileNames) ] 
   if( length(toBeDeleted)>0 ){ file.remove(toBeDeleted) }
   deletedItems <- c(deletedItems, toBeDeleted)

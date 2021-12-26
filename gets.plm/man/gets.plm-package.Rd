@@ -1,10 +1,10 @@
 \name{gets.plm-package}
 \alias{gets.plm-package}
 \docType{package}
-\title{General-to-Specific (GETS) Modelling of linear paneldata models}
+\title{General-to-Specific (GETS) Modelling of linear panel data models of class 'plm'}
 
 \description{
-General-to-Specific (GETS) Modelling of models of class 'plm' (linear paneldata models), see Pretis, Reade and Sucarrat (2018) <doi:10.18637/jss.v086.i03>.
+General-to-Specific (GETS) Modelling of linear panel data models of class 'plm', see Pretis, Reade and Sucarrat (2018) <doi:10.18637/jss.v086.i03>.
 }
 
 \details{
@@ -13,7 +13,7 @@ General-to-Specific (GETS) Modelling of models of class 'plm' (linear paneldata 
 Package: \tab gets\cr
 Type: \tab Package\cr
 Version: \tab 1.0\cr
-Date: \tab 2021-01-18\cr
+Date: \tab 2021-12-26\cr
 License: \tab GPL-2\cr
 }
 

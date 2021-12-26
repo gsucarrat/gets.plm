@@ -2,7 +2,7 @@ import(zoo)
 import(gets)
 import(plm)
 
-importFrom("stats", "as.formula", "coef", "dnorm", "residuals", "sd", "vcov")
+importFrom("stats", "as.formula", "coef", "df.residual", "dnorm", "model.frame", "model.matrix", "printCoefmat", "pt", "residuals", "sd", "terms.formula", "vcov")
 
 export("gets.plm")
 

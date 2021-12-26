@@ -1,10 +1,10 @@
-* using log directory 'C:/Users/sucarrat/Documents/R/gs/gets.plm/github/gets.plm.Rcheck'
+* using log directory 'C:/Users/sucarrat/Documents/R/gs/gets.plm/devel/gets.plm.Rcheck'
 * using R version 4.0.3 (2020-10-10)
 * using platform: x86_64-w64-mingw32 (64-bit)
 * using session charset: ISO8859-1
 * checking for file 'gets.plm/DESCRIPTION' ... OK
 * checking extension type ... Package
-* this is package 'gets.plm' version '1.0'
+* this is package 'gets.plm' version '0.1'
 * checking package namespace information ... OK
 * checking package dependencies ... OK
 * checking if this is a source package ... OK

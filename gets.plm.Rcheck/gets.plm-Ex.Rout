@@ -47,7 +47,7 @@ Loading required package: plm
 > ###   (linear paneldata models)
 > ### Aliases: gets.plm
 > ### Keywords: Statistical Models Time Series Econometrics Climate
-> ###   Econometrics Financial Econometrics
+> ###   Econometrics Financial Econometrics Panel Data
 > 
 > ### ** Examples
 > 
@@ -123,93 +123,128 @@ R-Squared:      0.12946
 Adj. R-Squared: -0.37546
 F-statistic: 0.743542 on 10 and 50 DF, p-value: 0.68047
 > 
-> myspecific <- gets(mygum) #101 estimations
-10 path(s) to search
-Searching: 1 2 3 4 5 6 7 8 9 10 
+> myspecific <- gets(mygum)
 
-   Final model is empty 
+Dependent variable: Z 
 
-> summary(myspecific)
-                  Length Class  Mode     
-time.started       1     -none- character
-time.finished      1     -none- character
-no.of.estimations  1     -none- numeric  
-paths             10     -none- list     
-terminals          1     -none- list     
-terminals.results  4     -none- numeric  
-best.terminal      1     -none- numeric  
-> 
-> myspecific <- gets(mygum, turbo=TRUE) #56 estimations
-10 path(s) to search
-Searching: 1 2 3 4 5 6 7 8 9 10 
+Start model (GUM):
 
-   Final model is empty 
-
-> summary(myspecific)
-                  Length Class  Mode     
-time.started       1     -none- character
-time.finished      1     -none- character
-no.of.estimations  1     -none- numeric  
-paths             10     -none- list     
-terminals          1     -none- list     
-terminals.results  4     -none- numeric  
-best.terminal      1     -none- numeric  
-> 
-> myspecific <- gets(mygum, keep=2)
-9 path(s) to search
-Searching: 1 2 3 4 5 6 7 8 9 
-> summary(myspecific)
-Oneway (individual) effect Within Model
-
-Call:
-plm(formula = Z ~ b, data = mydata)
-
-Balanced Panel: n = 20, T = 4, N = 80
-
-Residuals:
-     Min.   1st Qu.    Median   3rd Qu.      Max. 
--2.385475 -0.540158 -0.024335  0.627152  2.143056 
-
-Coefficients:
-   Estimate Std. Error t-value Pr(>|t|)
-b -0.063509   0.131832 -0.4817   0.6318
-
-Total Sum of Squares:    56.948
-Residual Sum of Squares: 56.725
-R-Squared:      0.0039181
-Adj. R-Squared: -0.33374
-F-statistic: 0.232077 on 1 and 59 DF, p-value: 0.63177
-> 
-> myspecific <- gets(mygum, t.pval=0.4)
-5 path(s) to search
-Searching: 1 2 3 4 5 
-> summary(myspecific)
-Oneway (individual) effect Within Model
-
-Call:
-plm(formula = Z ~ a + b + d + e + i, data = mydata)
-
-Balanced Panel: n = 20, T = 4, N = 80
-
-Residuals:
-     Min.   1st Qu.    Median   3rd Qu.      Max. 
--2.324330 -0.580387  0.066512  0.526315  2.191398 
-
-Coefficients:
-  Estimate Std. Error t-value Pr(>|t|)  
-a  0.15928    0.13119  1.2141  0.22988  
-b -0.15152    0.13320 -1.1376  0.26023  
-d  0.20080    0.11813  1.6998  0.09483 .
-e -0.17340    0.11639 -1.4897  0.14200  
-i  0.14285    0.12127  1.1779  0.24390  
+  reg.no keep      coef std.error  t-stat p-value  
+a      1    0  0.144643  0.142667  1.0138 0.31554  
+b      2    0 -0.157483  0.145957 -1.0790 0.28578  
+c      3    0  0.064067  0.145269  0.4410 0.66110  
+d      4    0  0.226367  0.127479  1.7757 0.08187 .
+e      5    0 -0.190057  0.124129 -1.5311 0.13204  
+f      6    0  0.025365  0.151229  0.1677 0.86747  
+g      7    0  0.034192  0.118534  0.2885 0.77419  
+h      8    0  0.076150  0.144714  0.5262 0.60107  
+i      9    0  0.136182  0.129138  1.0545 0.29670  
+j     10    0 -0.079805  0.127501 -0.6259 0.53422  
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Total Sum of Squares:    56.948
-Residual Sum of Squares: 50.358
-R-Squared:      0.11572
-Adj. R-Squared: -0.27014
-F-statistic: 1.43954 on 5 and 55 DF, p-value: 0.22477
+10 path(s) to search
+Searching: 1 2 3 4 5 6 7 8 9 10 
+
+  Path 1: 1 7 6 3 10 8 2 9 5 4 
+  Path 2: 2 6 7 8 10 3 9 1 5 4 
+  Path 3: 3 6 7 10 8 2 9 1 5 4 
+  Path 4: 4 3 7 6 8 10 2 1 9 5 
+  Path 5: 5 6 7 3 8 10 2 9 1 4 
+  Path 6: 6 7 3 10 8 2 9 1 5 4 
+  Path 7: 7 6 3 10 8 2 9 1 5 4 
+  Path 8: 8 6 7 3 10 2 9 1 5 4 
+  Path 9: 9 6 7 3 8 10 2 1 5 4 
+  Path 10: 10 7 6 3 8 2 9 1 5 4 
+
+Terminal models:
+
+                info(sc)      logl  n k
+spec 1 (1-cut): 2.667103 -106.6841 80 0
+
+Retained regressor(s):
+
+  none
+> 
+> myspecific <- gets(mygum, keep=2)
+
+Dependent variable: Z 
+
+Start model (GUM):
+
+  reg.no keep      coef std.error  t-stat p-value  
+a      1    0  0.144643  0.142667  1.0138 0.31554  
+b      2    1 -0.157483  0.145957 -1.0790 0.28578  
+c      3    0  0.064067  0.145269  0.4410 0.66110  
+d      4    0  0.226367  0.127479  1.7757 0.08187 .
+e      5    0 -0.190057  0.124129 -1.5311 0.13204  
+f      6    0  0.025365  0.151229  0.1677 0.86747  
+g      7    0  0.034192  0.118534  0.2885 0.77419  
+h      8    0  0.076150  0.144714  0.5262 0.60107  
+i      9    0  0.136182  0.129138  1.0545 0.29670  
+j     10    0 -0.079805  0.127501 -0.6259 0.53422  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+9 path(s) to search
+Searching: 1 2 3 4 5 6 7 8 9 
+
+  Path 1: 1 7 6 3 10 8 9 5 4 
+  Path 2: 3 6 7 10 8 9 1 5 4 
+  Path 3: 4 3 7 6 8 10 1 9 5 
+  Path 4: 5 6 7 3 8 10 9 1 4 
+  Path 5: 6 7 3 10 8 9 1 5 4 
+  Path 6: 7 6 3 10 8 9 1 5 4 
+  Path 7: 8 6 7 3 10 9 1 5 4 
+  Path 8: 9 6 7 3 8 10 1 5 4 
+  Path 9: 10 7 6 3 8 9 1 5 4 
+
+Terminal models:
+
+                info(sc)      logl  n k
+spec 1 (1-cut): 2.548921 -99.76584 80 1
+
+Retained regressor(s):
+
+  b 
+> 
+> myspecific <- gets(mygum, t.pval=0.4)
+
+Dependent variable: Z 
+
+Start model (GUM):
+
+  reg.no keep      coef std.error  t-stat p-value  
+a      1    0  0.144643  0.142667  1.0138 0.31554  
+b      2    0 -0.157483  0.145957 -1.0790 0.28578  
+c      3    0  0.064067  0.145269  0.4410 0.66110  
+d      4    0  0.226367  0.127479  1.7757 0.08187 .
+e      5    0 -0.190057  0.124129 -1.5311 0.13204  
+f      6    0  0.025365  0.151229  0.1677 0.86747  
+g      7    0  0.034192  0.118534  0.2885 0.77419  
+h      8    0  0.076150  0.144714  0.5262 0.60107  
+i      9    0  0.136182  0.129138  1.0545 0.29670  
+j     10    0 -0.079805  0.127501 -0.6259 0.53422  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+5 path(s) to search
+Searching: 1 2 3 4 5 
+
+  Path 1: 3 6 7 10 8 
+  Path 2: 6 7 3 10 8 
+  Path 3: 7 6 3 10 8 
+  Path 4: 8 6 7 3 10 
+  Path 5: 10 7 6 3 8 
+
+Terminal models:
+
+                info(sc)      logl  n k
+spec 1 (1-cut): 2.648964 -95.00348 80 5
+
+Retained regressor(s):
+
+  a   b   d   e   i 
 > 
 > ##new gum, do gets:
 > ##=================
@@ -251,93 +286,128 @@ R-Squared:      0.14461
 Adj. R-Squared: -0.43778
 F-statistic: 0.794583 on 10 and 47 DF, p-value: 0.63413
 > 
-> myspecific <- gets(mygum) #101 estimations
-10 path(s) to search
-Searching: 1 2 3 4 5 6 7 8 9 10 
+> myspecific <- gets(mygum)
 
-   Final model is empty 
+Dependent variable: Z 
 
-> summary(myspecific)
-                  Length Class  Mode     
-time.started       1     -none- character
-time.finished      1     -none- character
-no.of.estimations  1     -none- numeric  
-paths             10     -none- list     
-terminals          1     -none- list     
-terminals.results  4     -none- numeric  
-best.terminal      1     -none- numeric  
-> 
-> myspecific <- gets(mygum, turbo=TRUE) #56 estimations
-10 path(s) to search
-Searching: 1 2 3 4 5 6 7 8 9 10 
+Start model (GUM):
 
-   Final model is empty 
-
-> summary(myspecific)
-                  Length Class  Mode     
-time.started       1     -none- character
-time.finished      1     -none- character
-no.of.estimations  1     -none- numeric  
-paths             10     -none- list     
-terminals          1     -none- list     
-terminals.results  4     -none- numeric  
-best.terminal      1     -none- numeric  
-> 
-> myspecific <- gets(mygum, keep=2)
-9 path(s) to search
-Searching: 1 2 3 4 5 6 7 8 9 
-> summary(myspecific)
-Twoways effects Within Model
-
-Call:
-plm(formula = Z ~ b, data = mydata, effect = "twoways")
-
-Balanced Panel: n = 20, T = 4, N = 80
-
-Residuals:
-     Min.   1st Qu.    Median   3rd Qu.      Max. 
--2.406049 -0.510883 -0.036558  0.659197  2.121470 
-
-Coefficients:
-   Estimate Std. Error t-value Pr(>|t|)
-b -0.055048   0.137699 -0.3998   0.6908
-
-Total Sum of Squares:    56.735
-Residual Sum of Squares: 56.574
-R-Squared:      0.0028458
-Adj. R-Squared: -0.4067
-F-statistic: 0.159818 on 1 and 56 DF, p-value: 0.69084
-> 
-> myspecific <- gets(mygum, t.pval=0.4)
-5 path(s) to search
-Searching: 1 2 3 4 5 
-> summary(myspecific)
-Twoways effects Within Model
-
-Call:
-plm(formula = Z ~ a + b + d + e + i, data = mydata, effect = "twoways")
-
-Balanced Panel: n = 20, T = 4, N = 80
-
-Residuals:
-     Min.   1st Qu.    Median   3rd Qu.      Max. 
--2.441497 -0.543890  0.063706  0.504649  2.033153 
-
-Coefficients:
-  Estimate Std. Error t-value Pr(>|t|)  
-a  0.16560    0.13500  1.2267  0.22548  
-b -0.15748    0.13975 -1.1269  0.26496  
-d  0.23064    0.12601  1.8304  0.07292 .
-e -0.18228    0.12126 -1.5032  0.13883  
-i  0.14955    0.12806  1.1679  0.24819  
+  reg.no keep      coef std.error  t-stat p-value  
+a      1    0  0.160938  0.146797  1.0963 0.27852  
+b      2    0 -0.169049  0.152049 -1.1118 0.27188  
+c      3    0  0.079763  0.151521  0.5264 0.60107  
+d      4    0  0.266514  0.136823  1.9479 0.05742 .
+e      5    0 -0.199632  0.129102 -1.5463 0.12874  
+f      6    0  0.066758  0.165964  0.4022 0.68933  
+g      7    0  0.058062  0.123303  0.4709 0.63990  
+h      8    0  0.081820  0.148102  0.5525 0.58326  
+i      9    0  0.158162  0.137067  1.1539 0.25437  
+j     10    0 -0.090072  0.134409 -0.6701 0.50605  
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-Total Sum of Squares:    56.735
-Residual Sum of Squares: 49.655
-R-Squared:      0.12479
-Adj. R-Squared: -0.32964
-F-statistic: 1.48288 on 5 and 52 DF, p-value: 0.21138
+10 path(s) to search
+Searching: 1 2 3 4 5 6 7 8 9 10 
+
+  Path 1: 1 7 6 3 10 8 2 9 5 4 
+  Path 2: 2 6 7 8 10 3 9 1 5 4 
+  Path 3: 3 6 7 10 8 2 9 1 5 4 
+  Path 4: 4 3 8 7 10 6 2 1 9 5 
+  Path 5: 5 7 6 8 3 10 2 9 1 4 
+  Path 6: 6 7 8 3 10 2 9 1 5 4 
+  Path 7: 7 6 8 3 10 2 9 1 5 4 
+  Path 8: 8 6 7 3 10 2 9 1 5 4 
+  Path 9: 9 6 7 3 10 8 2 1 5 4 
+  Path 10: 10 3 7 6 8 2 9 1 5 4 
+
+Terminal models:
+
+                info(sc)      logl  n k
+spec 1 (1-cut): 2.667103 -106.6841 80 0
+
+Retained regressor(s):
+
+  none
+> 
+> myspecific <- gets(mygum, keep=2)
+
+Dependent variable: Z 
+
+Start model (GUM):
+
+  reg.no keep      coef std.error  t-stat p-value  
+a      1    0  0.160938  0.146797  1.0963 0.27852  
+b      2    1 -0.169049  0.152049 -1.1118 0.27188  
+c      3    0  0.079763  0.151521  0.5264 0.60107  
+d      4    0  0.266514  0.136823  1.9479 0.05742 .
+e      5    0 -0.199632  0.129102 -1.5463 0.12874  
+f      6    0  0.066758  0.165964  0.4022 0.68933  
+g      7    0  0.058062  0.123303  0.4709 0.63990  
+h      8    0  0.081820  0.148102  0.5525 0.58326  
+i      9    0  0.158162  0.137067  1.1539 0.25437  
+j     10    0 -0.090072  0.134409 -0.6701 0.50605  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+9 path(s) to search
+Searching: 1 2 3 4 5 6 7 8 9 
+
+  Path 1: 1 7 6 3 10 8 9 5 4 
+  Path 2: 3 6 7 10 8 9 1 5 4 
+  Path 3: 4 3 8 7 10 6 1 9 5 
+  Path 4: 5 7 6 8 3 10 9 1 4 
+  Path 5: 6 7 8 3 10 9 1 5 4 
+  Path 6: 7 6 8 3 10 9 1 5 4 
+  Path 7: 8 6 7 3 10 9 1 5 4 
+  Path 8: 9 6 7 3 10 8 1 5 4 
+  Path 9: 10 3 7 6 8 9 1 5 4 
+
+Terminal models:
+
+                info(sc)      logl  n k
+spec 1 (1-cut): 2.546251 -99.65903 80 1
+
+Retained regressor(s):
+
+  b 
+> 
+> myspecific <- gets(mygum, t.pval=0.4)
+
+Dependent variable: Z 
+
+Start model (GUM):
+
+  reg.no keep      coef std.error  t-stat p-value  
+a      1    0  0.160938  0.146797  1.0963 0.27852  
+b      2    0 -0.169049  0.152049 -1.1118 0.27188  
+c      3    0  0.079763  0.151521  0.5264 0.60107  
+d      4    0  0.266514  0.136823  1.9479 0.05742 .
+e      5    0 -0.199632  0.129102 -1.5463 0.12874  
+f      6    0  0.066758  0.165964  0.4022 0.68933  
+g      7    0  0.058062  0.123303  0.4709 0.63990  
+h      8    0  0.081820  0.148102  0.5525 0.58326  
+i      9    0  0.158162  0.137067  1.1539 0.25437  
+j     10    0 -0.090072  0.134409 -0.6701 0.50605  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+5 path(s) to search
+Searching: 1 2 3 4 5 
+
+  Path 1: 3 6 7 10 8 
+  Path 2: 6 7 8 3 10 
+  Path 3: 7 6 8 3 10 
+  Path 4: 8 6 7 3 10 
+  Path 5: 10 3 7 6 8 
+
+Terminal models:
+
+                info(sc)     logl  n k
+spec 1 (1-cut): 2.634909 -94.4413 80 5
+
+Retained regressor(s):
+
+  a   b   d   e   i 
 > 
 > 
 > 
@@ -347,7 +417,7 @@ F-statistic: 1.48288 on 5 and 52 DF, p-value: 0.21138
 > cleanEx()
 > options(digits = 7L)
 > base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
-Time elapsed:  4.8 0.03 4.86 NA NA 
+Time elapsed:  2.55 0.01 2.68 NA NA 
 > grDevices::dev.off()
 null device 
           1 
