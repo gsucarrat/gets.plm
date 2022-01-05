@@ -10,9 +10,10 @@
 ##                       
 ###########################################################
 
-##IDEAS:
-## - use paste0(xnames, collapse=" + ") to efficiently
-##   create formulas
+##CHALLENGE: To obtain the data used with model.matrix(),
+##model.frame() and the formula used, since there does not
+##seem to be a consistent way that works across models and
+##specifications
 
 ###########################################################
 ## gets.plm()
@@ -24,10 +25,12 @@ gets.plm <- function(x, t.pval=0.05, wald.pval=t.pval, do.pet=TRUE,
   alarm=FALSE, ...)
 {
   ## 1 initialise
-  ## 2 print start model (the gum)
-  ## 3 user-specified estimator
-  ## 4 do gets
-  ## 5 return result
+  ## 2 create gum data
+  ## 3 define user-specified estimator
+  ## 4 estimate and print gum (start model)
+  ## 5 do gets
+  ## 6 estimate final model
+  ## 7 return result
 
   ##---------------
   ## 1 initialise
@@ -37,90 +40,200 @@ gets.plm <- function(x, t.pval=0.05, wald.pval=t.pval, do.pet=TRUE,
   callAsList <- as.list(x$call)
   listOfArgs <- callAsList[-1]
   whereIndex <- which( names(listOfArgs)=="index" )
-  if( length(whereIndex)>0 ){ listOfArgs[ whereIndex ] <- NULL }
-  
-  ##obtain data:
-  modelFrame <- model.frame(x)
-  xSformula <- x$formula
-  modelMatrix <- #"Formula" class:
-    model.matrix(xSformula, data=modelFrame)
-#OLD (based on "formula" class):
-#  modelMatrix <- model.matrix(as.formula(listOfArgs$formula),
-#    data=modelFrame)
-  idAndTime <- index(x)
-      
-  ##regressor names, standard errors, dfs:
-  coefs <- coef(x)
-  coefNames <- names(coefs)
-  xNames <- coefNames  
-  stderrs <- sqrt(diag(vcov(x)))
-  dfs <- df.residual(x)
-  dfs0 <- dfs + length(xNames)
-    
-  ##is there an intercept?
-  hasIntercept <- ifelse(coefNames[1]=="(Intercept)", TRUE, FALSE)
-  if( hasIntercept ){
-    xNames <- xNames[-1]
-    dfs0 <- dfs0 - 1
-  }    
+  if( length(whereIndex)>0 ){
+    ##full index is obtained below and added to GUMdata
+    listOfArgs[ whereIndex ] <- NULL
+    ##note: "index" argument should probably be added back
+    ##if final model is estimated.
+  }
 
-  ##startmodel empty?:
-  if( length(xNames)==0 ){ stop("no variables to search over") }
-  
-  ##create gum data:
-  yName <- colnames(modelFrame)[1]
-  y <- modelFrame[,yName]
-  x <- as.data.frame(modelMatrix[,xNames])
-  colnames(x) <- paste0("x", 1:NCOL(x))
-  GUMdata <- as.data.frame(cbind(idAndTime, y, x))
+  ##stop if model=="between":
+  if( !is.null(listOfArgs$model) ){
+    if( listOfArgs$model %in% c("between", "fd") ){
+      stop( "GETS modelling not available (yet?) for this model")
+    }
+  }
 
-  ##re-define x:
-  x <- colnames(x)
-  x <- rbind(x,x)
+  ##coefs, vcovs, df for empty model:
+  coefs <- coef(x) #for the check of myEstimator()
+  vcovs <- vcov(x) #for the check of myEstimator()
+  lengthCoefs <- length(coefs)
+  coefHasIntercept <-
+    ifelse( names(coefs)[1]=="(Intercept)", TRUE, FALSE)
+  if( coefHasIntercept ){
+    lengthCoefs <- lengthCoefs - 1
+    coefs <- coefs[-1]
+    vcovs <- cbind(vcovs[,-1])
+    vcovs <- rbind(vcovs[-1,])
+  }
+  dfs0 <- df.residual(x) + lengthCoefs #df for empty model:
 
-  ##create pipe part (if any):
-  ##(these are ideas primarily for the future)
-  formulatxt <- as.character(xSformula)[3]
-  wherePipes <- integer(0)
+  ##is the start model empty?:
+  if( lengthCoefs < 1 ){ stop("no variables to search over") }
+
+  ##pipe part in formula?
+  formulatxt <- as.character(x$formula)[3]
+  wherePipe <- integer(0)
   for(i in 1:nchar(formulatxt)){
-    tmp <- substr(formulatxt,i,i)
-    if( tmp == "|"){ wherePipes <- c(wherePipes, i) }      
+    if( substr(formulatxt,i,i) == "|"){ wherePipe <- i; break }      
   }
-  if( length(wherePipes) > 0 ){
-    stop("pipes | in formula not possible (yet)")
-#    pos <- c(wherePipes, nchar(formulatxt))
-#    form <- paste0(yName, " ~", substr(formulatxt, pos[1]+1, pos[2]-1),
-#        " - 1")
-#    z <- as.data.frame(model.matrix(as.formula(form), modelFrame))
+  if( length(wherePipe) > 0 ){
+    stop("pipe(s) '|' in formula not possible yet")
+#for the future:
+#    pipetxt <- substr(formulatxt, wherePipe,nchar(formulatxt))
+#    pipetxt <- paste0(" ", pipetxt)
+  }else{
+    pipetxt <- character(0)
   }
 
-  ##do some clean-up:
-  rm(idAndTime, modelFrame, modelMatrix)
+  ##-------------------
+  ## 2 create gum data
+  ##-------------------
     
-  ##------------------------------
-  ## 2 print start model (the gum)
-  ##------------------------------
+  ##obtain data:
+  idAndTime <- index(x)
+  modelFrame <- model.frame(x)
+  frameNames <- colnames(modelFrame)
   
-  gum <- NULL #make sure the 'gum' exists
+  ##create y and x:
+  y <- modelFrame[,1]
+  yName <- frameNames[1]
+  xNamesOriginal <- names(coefs)
+  x <- model.matrix(x)
+  x <- as.data.frame(x[,xNamesOriginal])
+  xNames <- paste0("x", 1:NCOL(x))
+  colnames(x) <- xNames
+  attr(x, "contrasts") <- NULL
+  attr(x, "assign") <- NULL
+
+  ##create gum data:
+  GUMdata <- cbind(idAndTime, y, x)
+  
+  ##re-define y and x:
+  y <- c("y", "y")
+  x <- xNames
+  x <- rbind(x,x)
+  colnames(x) <- paste0("x", 1:NCOL(x))
+
+  ##do some clean-up (to reduce memory usage):
+  rm(idAndTime, modelFrame)
+
+
+  ##-----------------------------
+  ## 3 user-specified estimator
+  ##-----------------------------
+  
+  myEstimator <- function(y, x, data=NULL, listOfArgs=NULL)
+  {
+    ##handle NULL-matrices (obligatory):
+    if(is.null(x) || NCOL(x)==0){
+  
+      result <- list()
+    	eps <- GUMdata[,y[1]]
+#    	eps <- data[,y[1]]
+    	result$logl <- sum(dnorm(eps, sd=sd(eps), log=TRUE))
+    	result$n <- NROW(eps)
+    	result$k <- 0
+    	result$df <- dfs0
+  
+    }else{ ##if x is not NULL:
+  
+      ##make formula:
+      myformula <- paste0(x[1,], collapse=" + ")
+      myformula <- paste0("y ~ ", myformula)
+#      myformula <- paste0(y[1], " ~ ", x[1,1])
+#      if( NCOL(x)>1 ){
+#        for(i in 2:NCOL(x)){
+#          myformula <- paste0(myformula, " + ", x[1,i])
+#        }
+#      }
+      myformula <- paste0(myformula, pipetxt)
+      myformula <- as.formula(myformula)
+
+      ##estimate:
+      listOfArgs$formula <- myformula
+      listOfArgs$data <- GUMdata
+#      listOfArgs$data <- data
+      tmp <- do.call("plm", listOfArgs)
+  
+    	#rename and re-organise:
+     	result <- list()
+      coefs <- coef(tmp)
+      vcovs <- vcov(tmp)
+      coefsHasIntercept <- 
+        ifelse( names(coefs)[1]=="(Intercept)", TRUE, FALSE)
+      if( coefsHasIntercept ){ 
+        coefs <- coefs[-1]
+        vcovs <- cbind(vcovs[,-1])
+        vcovs <- rbind(vcovs[-1,])
+      }
+      result$coefficients <- coefs
+      result$vcov <- vcovs
+    	eps <- residuals(tmp)
+    	result$logl <- sum(dnorm(eps, sd=sd(eps), log=TRUE))
+    	result$n <- NROW(eps)
+    	result$k <- NCOL(x)
+    	result$df <- df.residual(tmp)
+  
+    }
+  
+    ##final output:
+    return(result)
+
+  } #close myEstimator()
+
+
+  ##----------------------------------------
+  ## 4 estimate and print gum (start model)
+  ##----------------------------------------
+
+  ##estimate gum using myEstimator():
+  gum.result <-
+    myEstimator(y, x, data=GUMdata, listOfArgs=listOfArgs)
+
+  ##check the gum produced by myEstimator():
+  ##----------------------------------------
+  
+  ##do checks
+  gumOK <- rep(NA,3)
+  gumOK[1] <- length(coefs) == length(gum.result$coefficients)
+  gumOK[2] <-
+    all(round(coefs, digits=11) == round(gum.result$coefficients, digits=11))
+  gumOK[3] <-
+    all(round(vcovs, digits=11) == round(gum.result$vcov, digits=11))
+  
+  ##warning?:
+  if( all(gumOK)==FALSE ){
+    warning("gum (start model) of 'myEstimator' not identical to gum of 'plm'")
+  }
+
+  ##print the gum:
+  ##--------------  
+
+  ##ensure gum object exists:
+  gum <- NULL 
+  
   if( print.searchinfo ){
+
+    coefs <- gum.result$coefficients  
+    stderrs <- sqrt(diag(gum.result$vcov))
   
     ##create gum matrix:
     tstats <- coefs/stderrs
-#OLD:
-#    dfs <- length(y) - length(coefs)
     colnamesgum <-
       c("reg.no", "keep", "coef", "std.error", "t-stat", "p-value")
     gum <- matrix(NA, length(coefs), length(colnamesgum))
     colnames(gum) <- colnamesgum
-    rownames(gum) <- names(coefs)
+    rownames(gum) <- xNamesOriginal
+#    rownames(gum) <- names(coefs)
         
     ##fill contents:
     gum[,"coef"] <- coefs
     gum[,"std.error"] <- stderrs
     gum[,"t-stat"] <- tstats
-    gum[,"p-value"] <- 2*pt(abs(tstats), df=dfs, lower.tail=FALSE)
-    if( hasIntercept ){ gum <- rbind(gum[-1,]) }
-    gum[,"reg.no"] <- 1:length(xNames)
+    gum[,"p-value"] <- ##same as in getsFun():
+      pt(abs(tstats), df=gum.result$df, lower.tail=FALSE)*2
+    gum[,"reg.no"] <- 1:length(coefs)
     gum[,"keep"] <- 0
     if( !is.null(keep) ){ gum[keep,"keep"] <- 1}
     gum <- as.data.frame(gum)
@@ -136,75 +249,15 @@ gets.plm <- function(x, t.pval=0.05, wald.pval=t.pval, do.pet=TRUE,
     cat("\n")
 
   } #end if( print.searchinfo )
-  
-  ##-----------------------------
-  ## 3 user-specified estimator
-  ##-----------------------------
-  
-  myEstimator <- function(y, x, data=NULL, listOfArgs=NULL)
-  {
-    ##handle NULL-matrices (obligatory):
-    if(is.null(x) || NCOL(x)==0){
-  
-      result <- list()
-    	eps <- data[,"y"]
-    	result$logl <- sum(dnorm(eps, sd=sd(eps), log=TRUE))
-    	result$n <- NROW(eps)
-    	result$k <- 0
-    	result$df <- dfs0
-#OLD:
-#    	result$df <- result$n - result$k
-  
-    }else{ ##if x is not NULL:
-  
-      ##make formula:
-      myformula <- paste0("y ~ ", x[1,1])
-      if(NCOL(x)>1){
-        for(i in 2:NCOL(x)){
-          myformula <- paste0(myformula, " + ", x[1,i])
-        }
-      }
-      myformula <- as.formula(myformula)
-
-      ##estimate:
-      listOfArgs$formula <- myformula
-      listOfArgs$data <- GUMdata #should be data?
-      tmp <- do.call("plm", listOfArgs)
-  
-    	#rename and re-organise:
-     	result <- list()
-      coefs <- coef(tmp)
-      vcovs <- vcov(tmp)
-      if( hasIntercept ){ #hasIntercept should be an argument in myEstimator?
-        coefs <- coefs[-1]
-        vcovs <- cbind(vcovs[,-1])
-        vcovs <- rbind(vcovs[-1,])
-      }
-      result$coefficients <- coefs
-      result$vcov <- vcovs
-    	eps <- residuals(tmp)
-    	result$logl <- sum(dnorm(eps, sd=sd(eps), log=TRUE))
-    	result$n <- NROW(eps)
-    	result$k <- NCOL(x)
-    	result$df <- df.residual(tmp)
-#OLD:
-#    	result$df <- result$n - result$k
-  
-    }
-  
-    ##final output:
-    return(result)
-
-  } #close myEstimator()
-
+    
   ##------------
-  ## 4 do gets
+  ## 5 do gets
   ##------------
 
   getsResult <- getsFun(y, x,
     user.estimator=list(name="myEstimator", data=GUMdata,
-    listOfArgs=listOfArgs, envir=environment()), t.pval=t.pval,
-    wald.pval=t.pval, do.pet=do.pet, keep=keep,
+    listOfArgs=listOfArgs, envir=environment()),
+    t.pval=t.pval, wald.pval=t.pval, do.pet=do.pet, keep=keep,
     include.gum=include.gum, include.1cut=include.1cut,
     include.empty=include.empty, max.paths=max.paths, turbo=turbo,
     tol=tol, print.searchinfo=print.searchinfo, alarm=alarm)
@@ -238,7 +291,7 @@ gets.plm <- function(x, t.pval=0.05, wald.pval=t.pval, do.pet=TRUE,
     if( length(getsResult$specific.spec)==0 ){
       cat("  none\n")
     }else{
-      cat(paste0("  ", xNames[as.numeric(getsResult$specific.spec)]), "\n")
+      cat(paste0("  ", xNamesOriginal[as.numeric(getsResult$specific.spec)]), "\n")
     }
 
   } #end if( print.searchinfo )
@@ -252,11 +305,12 @@ gets.plm <- function(x, t.pval=0.05, wald.pval=t.pval, do.pet=TRUE,
     cat("\n")
   }
 
-#for the future?: try to estimate final model
-#
-#  ##----------------
-#  ## 5 final model
-#  ##----------------
+
+  ##----------------
+  ## 6 final model
+  ##----------------
+
+#for the future: try to estimate final model
 #
 #  if( estimate.final ){ then...etc. }
 #  plmResult <- NULL
@@ -295,7 +349,7 @@ gets.plm <- function(x, t.pval=0.05, wald.pval=t.pval, do.pet=TRUE,
 #  if(!is.null(plmClass)){ class(result) <- plmClass }
 
   ##------------------
-  ## 5 return result
+  ## 7 return result
   ##------------------
   
   result <- getsResult

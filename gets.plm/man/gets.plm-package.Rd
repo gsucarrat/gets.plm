@@ -12,8 +12,8 @@ General-to-Specific (GETS) Modelling of linear panel data models of class 'plm',
 \tabular{ll}{
 Package: \tab gets\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2021-12-26\cr
+Version: \tab 0.1\cr
+Date: \tab 2022-01-05\cr
 License: \tab GPL-2\cr
 }
 
